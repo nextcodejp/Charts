@@ -83,35 +83,36 @@ open class BarLineScatterCandleBubbleRenderer: NSObject, DataRenderer
 
         public init()
         {
-            
+
         }
-        
+
         public init(chart: BarLineScatterCandleBubbleChartDataProvider,
                     dataSet: BarLineScatterCandleBubbleChartDataSetProtocol,
                     animator: Animator?)
         {
             self.set(chart: chart, dataSet: dataSet, animator: animator)
         }
-        
+
         /// Calculates the minimum and maximum x values as well as the range between them.
         open func set(chart: BarLineScatterCandleBubbleChartDataProvider,
                       dataSet: BarLineScatterCandleBubbleChartDataSetProtocol,
                       animator: Animator?)
         {
             let phaseX = Swift.max(0.0, Swift.min(1.0, animator?.phaseX ?? 1.0))
-            
+
             let low = chart.lowestVisibleX
             let high = chart.highestVisibleX
-            
+            let highmax = Int(floor(high))
+
             let entryFrom = dataSet.entryForXValue(low, closestToY: .nan, rounding: .down)
             let entryTo = dataSet.entryForXValue(high, closestToY: .nan, rounding: .up)
-            
+
             self.min = entryFrom == nil ? 0 : dataSet.entryIndex(entry: entryFrom!)
-            self.max = entryTo == nil ? 0 : dataSet.entryIndex(entry: entryTo!)
+            self.max = entryTo == nil ? highmax : dataSet.entryIndex(entry: entryTo!)
             range = Int(Double(self.max - self.min) * phaseX)
         }
     }
-    
+
     public func createAccessibleHeader(usingChart chart: ChartViewBase, andData data: ChartData, withDefaultDescription defaultDescription: String) -> NSUIAccessibilityElement {
         return AccessibleHeader.create(usingChart: chart, andData: data, withDefaultDescription: defaultDescription)
     }
